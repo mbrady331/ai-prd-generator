@@ -1,10 +1,28 @@
 # 🚀 Deployment Guide
 
-Deploy your AI-Powered PRD Generator to Render.com with zero configuration!
+Deploy your AI-Powered PRD Generator to multiple platforms with zero configuration!
 
-## 🎯 One-Click Deployment
+## 🆓 Free Hosting Options (No Payment Required)
 
-### Option 1: Deploy from GitHub (Recommended)
+## 🎯 Free Platform Options
+
+### Option 1: Railway.app (No Payment Required) ⭐ RECOMMENDED
+
+1. **Go to [railway.app](https://railway.app)** and sign in with GitHub
+2. **Click "New Project"** → **"Deploy from GitHub repo"**
+3. **Select your repository**: `mbrady331/ai-prd-generator`
+4. **Railway will auto-detect** the `railway.toml` configuration
+5. **Add environment variables** in the Variables tab:
+   - `OPENAI_API_KEY`: Your OpenAI API key
+6. **Deploy automatically** - Railway handles everything else
+
+**Benefits**: 
+- ✅ No payment method required
+- ✅ $5/month free credits (more than enough)
+- ✅ Auto-deploy on git push
+- ✅ Custom domains available
+
+### Option 2: Render.com (Payment Method Required)
 
 1. **Push to GitHub** (if you haven't already)
    ```bash
@@ -20,15 +38,39 @@ Deploy your AI-Powered PRD Generator to Render.com with zero configuration!
 6. **Add your environment variables** (see below)
 7. **Click "Create Web Service"**
 
-### Option 2: Manual Configuration
+### Option 3: Fly.io (No Payment Required)
 
-If you prefer manual setup:
+1. **Install Fly CLI**: Follow instructions at [fly.io/docs](https://fly.io/docs/)
+2. **Create fly.toml** (already included in repo)
+3. **Deploy**:
+   ```bash
+   fly auth login
+   fly launch
+   fly secrets set OPENAI_API_KEY=your_key_here
+   fly deploy
+   ```
 
-- **Name:** `ai-prd-generator`
-- **Environment:** `Python`
-- **Build Command:** `pip install -r requirements.txt`
-- **Start Command:** `cd backend && python main.py`
-- **Plan:** `Starter` (free tier available)
+### Option 4: Heroku (No Payment Required for Hobby Tier)
+
+1. **Install Heroku CLI**
+2. **Deploy**:
+   ```bash
+   heroku create your-app-name
+   heroku config:set OPENAI_API_KEY=your_key_here
+   git push heroku main
+   ```
+
+### Option 5: Render.com (Payment Method Required)
+
+**Note**: Render requires a payment method even for free tier usage.
+
+1. **Go to [render.com](https://render.com)** and sign in
+2. **Click "New +"** → **"Web Service"**
+3. **Connect your GitHub repository**
+4. **Render will auto-detect** the `render.yaml` configuration
+5. **Add your environment variables** (see below)
+6. **Add payment method** (required even for free tier)
+7. **Click "Create Web Service"**
 
 ## 🔑 Environment Variables
 
