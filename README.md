@@ -184,6 +184,22 @@ The system is designed to be extensible. To add a new research agent:
 
 Set `TEST_MODE=1` to run with mock responses for testing the application flow.
 
+## 🚀 Deployment
+
+### Render.com (Recommended)
+Deploy to Render.com with zero configuration using the included `render.yaml`:
+
+1. **Push to GitHub** and connect your repository to Render
+2. **Add environment variables** in Render dashboard
+3. **Deploy automatically** - Render detects the configuration
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
+
+### Other Platforms
+- **Heroku**: Use the included `Procfile` and `runtime.txt`
+- **Railway**: Automatic detection of Python apps
+- **DigitalOcean App Platform**: Use the Dockerfile or Python buildpack
+
 ## 🤝 Contributing
 
 1. Fork the repository
