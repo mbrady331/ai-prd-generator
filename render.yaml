@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: ai-prd-generator
+    env: python
+    region: oregon
+    plan: starter
+    buildCommand: |
+      pip install -r requirements.txt
+    startCommand: |
+      cd backend && python main.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: PORT
+        value: 8000
+      - key: TEST_MODE
+        value: "0"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: SERPAPI_API_KEY
+        sync: false
+      - key: ARIZE_SPACE_ID
+        sync: false
+      - key: ARIZE_API_KEY
+        sync: false
+    healthCheckPath: /health
+    autoDeploy: true
+    pullRequestPreviewsEnabled: true
