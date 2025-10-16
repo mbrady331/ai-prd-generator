@@ -1,0 +1,21 @@
+fastapi==0.104.1
+uvicorn==0.24.0
+pydantic>=2.0.0
+python-dotenv==1.0.0
+langgraph>=0.1.0
+langchain>=0.2.0
+langchain-core>=0.2.0
+langchain-openai>=0.1.0
+httpx==0.25.2
+python-multipart==0.0.6
+
+# Optional observability packages (install separately if needed)
+# arize-python-sdk
+# opentelemetry-api
+# opentelemetry-sdk
+# openinference-instrumentation-langchain
+# openinference-instrumentation-litellm
+
+# Development dependencies
+pytest==7.4.3
+pytest-asyncio==0.21.1

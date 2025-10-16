@@ -1,0 +1,26 @@
+# Environment configuration for PRD Agent
+# Copy this content to a file named .env and fill in your API keys
+
+# LLM Configuration (choose one)
+# Option 1: OpenAI (recommended)
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Option 2: OpenRouter (alternative to OpenAI)
+# OPENROUTER_API_KEY=your_openrouter_api_key_here
+# OPENROUTER_MODEL=openai/gpt-4o-mini
+
+# Search APIs (optional - for enhanced research capabilities)
+# Tavily API (recommended for AI apps)
+TAVILY_API_KEY=your_tavily_api_key_here
+
+# SerpAPI (alternative search API)
+# SERPAPI_API_KEY=your_serpapi_api_key_here
+
+# Observability (optional - for tracing and monitoring)
+# Arize configuration
+# ARIZE_SPACE_ID=your_arize_space_id
+# ARIZE_API_KEY=your_arize_api_key
+
+# Development/Testing
+# Set to "0" or "false" to use real APIs (when keys are provided)
+TEST_MODE=0

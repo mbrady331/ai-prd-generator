@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRD Generator - AI Product Requirements Document Creator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 1px solid #e1e8ed;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+
+        .form-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+
+        .priority-selector {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .priority-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .priority-option:hover {
+            border-color: #3498db;
+        }
+
+        .priority-option.selected {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .priority-option input[type="radio"] {
+            display: none;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+        }
+
+        .output-section {
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e1e8ed;
+            display: none;
+        }
+
+        .output-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .prd-output {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #e1e8ed;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .copy-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #2980b9;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .priority-selector {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 PRD Generator</h1>
+            <p>AI-Powered Product Requirements Document Creator</p>
+        </div>
+
+        <div class="form-container">
+            <form id="prdForm">
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h2>📋 Basic Information</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productName">Product Name *</label>
+                            <input type="text" id="productName" name="productName" required placeholder="e.g., MyAwesome App">
+                        </div>
+                        <div class="form-group">
+                            <label for="version">Version</label>
+                            <input type="text" id="version" name="version" placeholder="e.g., 1.0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productManager">Product Manager</label>
+                            <input type="text" id="productManager" name="productManager" placeholder="Your name">
+                        </div>
+                        <div class="form-group">
+                            <label for="targetDate">Target Launch Date</label>
+                            <input type="date" id="targetDate" name="targetDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="executiveSummary">Executive Summary *</label>
+                        <textarea id="executiveSummary" name="executiveSummary" required placeholder="Brief overview of your product idea..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Problem & Solution -->
+                <div class="form-section">
+                    <h2>🎯 Problem & Solution</h2>
+                    <div class="form-group">
+                        <label for="problemStatement">Problem Statement *</label>
+                        <textarea id="problemStatement" name="problemStatement" required placeholder="What problem does your product solve? Who has this problem?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="solution">Solution</label>
+                        <textarea id="solution" name="solution" placeholder="How does your product solve this problem?"></textarea>
+                    </div>
+                </div>
+
+                <!-- Target Users -->
+                <div class="form-section">
+                    <h2>👥 Target Users</h2>
+                    <div class="form-group">
+                        <label for="primaryUsers">Primary Users *</label>
+                        <textarea id="primaryUsers" name="primaryUsers" required placeholder="Who are your main users? (e.g., Software developers, Marketing teams, Students)"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="secondaryUsers">Secondary Users</label>
+                        <textarea id="secondaryUsers" name="secondaryUsers" placeholder="Who else might use your product?"></textarea>
+                    </div>
+                </div>
+
+                <!-- Key Features -->
+                <div class="form-section">
+                    <h2>⚡ Key Features</h2>
+                    <div id="featuresContainer">
+                        <div class="feature-item">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Feature Name</label>
+                                    <input type="text" name="featureName[]" placeholder="e.g., User Authentication">
+                                </div>
+                                <div class="form-group">
+                                    <label>Priority</label>
+                                    <div class="priority-selector">
+                                        <div class="priority-option" onclick="selectPriority(this, 'P0')">
+                                            <input type="radio" name="featurePriority[]" value="P0">
+                                            <span>P0 (Must Have)</span>
+                                        </div>
+                                        <div class="priority-option" onclick="selectPriority(this, 'P1')">
+                                            <input type="radio" name="featurePriority[]" value="P1">
+                                            <span>P1 (Should Have)</span>
+                                        </div>
+                                        <div class="priority-option" onclick="selectPriority(this, 'P2')">
+                                            <input type="radio" name="featurePriority[]" value="P2">
+                                            <span>P2 (Nice to Have)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea name="featureDescription[]" placeholder="Describe what this feature does..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Acceptance Criteria</label>
+                                <textarea name="featureCriteria[]" placeholder="What needs to be true for this feature to be complete?"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addFeature()" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px;">+ Add Feature</button>
+                </div>
+
+                <!-- Technical Requirements -->
+                <div class="form-section">
+                    <h2>⚙️ Technical Requirements</h2>
+                    <div class="form-group">
+                        <label for="platforms">Target Platforms</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="web" name="platforms" value="Web">
+                                <label for="web">Web</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="mobile" name="platforms" value="Mobile">
+                                <label for="mobile">Mobile</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="desktop" name="platforms" value="Desktop">
+                                <label for="desktop">Desktop</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="api" name="platforms" value="API">
+                                <label for="api">API</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="techStack">Technology Stack</label>
+                        <textarea id="techStack" name="techStack" placeholder="e.g., React, Node.js, PostgreSQL, AWS"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="performanceRequirements">Performance Requirements</label>
+                        <textarea id="performanceRequirements" name="performanceRequirements" placeholder="e.g., Support 1000+ concurrent users, 99.9% uptime"></textarea>
+                    </div>
+                </div>
+
+                <!-- Success Metrics -->
+                <div class="form-section">
+                    <h2>📊 Success Metrics</h2>
+                    <div class="form-group">
+                        <label for="primaryKPIs">Primary KPIs</label>
+                        <textarea id="primaryKPIs" name="primaryKPIs" placeholder="e.g., 50% increase in user engagement, 30% reduction in support tickets"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="secondaryKPIs">Secondary KPIs</label>
+                        <textarea id="secondaryKPIs" name="secondaryKPIs" placeholder="e.g., User satisfaction score > 4.5, Monthly active users > 10K"></textarea>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="form-section">
+                    <h2>📅 Timeline & Milestones</h2>
+                    <div class="form-group">
+                        <label for="timeline">Development Timeline</label>
+                        <textarea id="timeline" name="timeline" placeholder="e.g., Phase 1 (MVP): 3 months, Phase 2: 6 months, Phase 3: 12 months"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="milestones">Key Milestones</label>
+                        <textarea id="milestones" name="milestones" placeholder="e.g., Beta launch, Public release, Feature complete"></textarea>
+                    </div>
+                </div>
+
+                <!-- Risks & Constraints -->
+                <div class="form-section">
+                    <h2>⚠️ Risks & Constraints</h2>
+                    <div class="form-group">
+                        <label for="risks">Identified Risks</label>
+                        <textarea id="risks" name="risks" placeholder="e.g., Technical complexity, market competition, resource constraints"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="constraints">Constraints</label>
+                        <textarea id="constraints" name="constraints" placeholder="e.g., Budget limitations, regulatory requirements, technical dependencies"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="generate-btn">🚀 Generate PRD</button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Generating your PRD...</p>
+            </div>
+
+            <div class="output-section" id="outputSection">
+                <h2>📄 Generated PRD</h2>
+                <div class="prd-output" id="prdOutput"></div>
+                <button class="copy-btn" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let featureCount = 1;
+
+        function addFeature() {
+            featureCount++;
+            const container = document.getElementById('featuresContainer');
+            const newFeature = document.createElement('div');
+            newFeature.className = 'feature-item';
+            newFeature.innerHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Feature Name</label>
+                        <input type="text" name="featureName[]" placeholder="e.g., User Authentication">
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <div class="priority-selector">
+                            <div class="priority-option" onclick="selectPriority(this, 'P0')">
+                                <input type="radio" name="featurePriority[]" value="P0">
+                                <span>P0 (Must Have)</span>
+                            </div>
+                            <div class="priority-option" onclick="selectPriority(this, 'P1')">
+                                <input type="radio" name="featurePriority[]" value="P1">
+                                <span>P1 (Should Have)</span>
+                            </div>
+                            <div class="priority-option" onclick="selectPriority(this, 'P2')">
+                                <input type="radio" name="featurePriority[]" value="P2">
+                                <span>P2 (Nice to Have)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="featureDescription[]" placeholder="Describe what this feature does..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Acceptance Criteria</label>
+                    <textarea name="featureCriteria[]" placeholder="What needs to be true for this feature to be complete?"></textarea>
+                </div>
+                <button type="button" onclick="removeFeature(this)" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-top: 10px;">Remove Feature</button>
+            `;
+            container.appendChild(newFeature);
+        }
+
+        function removeFeature(button) {
+            button.parentElement.remove();
+        }
+
+        function selectPriority(element, value) {
+            const container = element.parentElement;
+            container.querySelectorAll('.priority-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            element.querySelector('input[type="radio"]').checked = true;
+        }
+
+        async function generatePRD(formData) {
+            // Convert form data to backend API format
+            const features = [];
+            const featureNames = formData.featureName || [];
+            const featureDescriptions = formData.featureDescription || [];
+            const featureCriteria = formData.featureCriteria || [];
+            const featurePriorities = formData.featurePriority || [];
+
+            for (let i = 0; i < featureNames.length; i++) {
+                if (featureNames[i] && featureNames[i].trim()) {
+                    features.push({
+                        name: featureNames[i],
+                        description: featureDescriptions[i] || '',
+                        criteria: featureCriteria[i] || '',
+                        priority: featurePriorities[i] || 'P1'
+                    });
+                }
+            }
+
+            const requestData = {
+                product_name: formData.productName,
+                version: formData.version || '1.0',
+                product_manager: formData.productManager || null,
+                target_date: formData.targetDate || null,
+                executive_summary: formData.executiveSummary,
+                problem_statement: formData.problemStatement,
+                solution: formData.solution || null,
+                primary_users: formData.primaryUsers,
+                secondary_users: formData.secondaryUsers || null,
+                features: features,
+                platforms: Array.isArray(formData.platforms) ? formData.platforms : (formData.platforms ? [formData.platforms] : []),
+                tech_stack: formData.techStack || null,
+                performance_requirements: formData.performanceRequirements || null,
+                primary_kpis: formData.primaryKPIs || null,
+                secondary_kpis: formData.secondaryKPIs || null,
+                timeline: formData.timeline || null,
+                milestones: formData.milestones || null,
+                risks: formData.risks || null,
+                constraints: formData.constraints || null
+            };
+
+            try {
+                console.log('Sending request data:', requestData);
+                const response = await fetch('/generate-prd', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Response error:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+                }
+
+                const result = await response.json();
+                return result.result;
+            } catch (error) {
+                console.error('Error generating PRD:', error);
+                throw error;
+            }
+        }
+
+        function copyToClipboard() {
+            const output = document.getElementById('prdOutput');
+            navigator.clipboard.writeText(output.textContent).then(() => {
+                const button = document.querySelector('.copy-btn');
+                const originalText = button.textContent;
+                button.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        document.getElementById('prdForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {};
+            
+            // Convert FormData to object
+            for (let [key, value] of formData.entries()) {
+                // Handle array fields (platforms, feature arrays)
+                if (key === 'platforms' || key.startsWith('feature')) {
+                    if (!data[key]) {
+                        data[key] = [];
+                    }
+                    if (Array.isArray(data[key])) {
+                        data[key].push(value);
+                    } else {
+                        data[key] = [data[key], value];
+                    }
+                } else {
+                    data[key] = value;
+                }
+            }
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('outputSection').style.display = 'none';
+
+            try {
+                const prd = await generatePRD(data);
+                document.getElementById('prdOutput').textContent = prd;
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('outputSection').style.display = 'block';
+                
+                // Scroll to output
+                document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                console.error('Failed to generate PRD:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('prdOutput').textContent = `Error generating PRD: ${error.message}\n\nPlease check that the backend server is running and try again.`;
+                document.getElementById('outputSection').style.display = 'block';
+                document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        // Initialize first priority option
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstPriority = document.querySelector('.priority-option');
+            if (firstPriority) {
+                selectPriority(firstPriority, 'P1');
+            }
+        });
+    </script>
+</body>
+</html>
